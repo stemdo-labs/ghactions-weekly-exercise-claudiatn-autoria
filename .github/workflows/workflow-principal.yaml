@@ -15,4 +15,4 @@ jobs:
     steps:
       - name: Verificar output CI
         run: |
-          echo "Output de CI: ${{ needs.call-workflow-ci.outputs.image_name }}"
+          echo "Output de CI: ${{ needs.call-workflow-ci.outputs.imagename }}"
