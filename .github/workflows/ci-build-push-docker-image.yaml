@@ -31,7 +31,7 @@ jobs:
 
     - name: Nombre del tag
       run: |
-        echo "El nombre de la imegen:  ${{steps.taggear_image.outputs.tagged}}"
+        echo IMAGE_NAME=${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_ENV
 
 
     - name: Hacer login en DockerHub
@@ -42,13 +42,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/sample-angular-app:0.0.0 .
+        docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/sample-angular-app:0.0.0 
+        docker push $DOCKER_USERNAME/$IMAGE_NAME
 
       
       
