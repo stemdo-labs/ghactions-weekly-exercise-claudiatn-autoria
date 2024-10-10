@@ -1,6 +1,10 @@
 name: CD
 on:
   workflow_call:
+   inputs:
+      image_name:
+        type: string
+        required: true
 
 jobs:
   upload-image:
@@ -9,6 +13,7 @@ jobs:
      
      env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      IMAGE_NAME: ${{ inputs.image_name }}
 
      steps:
        - name: Imprimir
