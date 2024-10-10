@@ -45,10 +45,7 @@ jobs:
         docker build -t $DOCKER_USERNAME/sample-angular-app:0.0.0 .
         docker images
         
-    - name: Taggear Docker image
-      run: |
-        docker tag $DOCKER_USERNAME/sample-angular-app: $DOCKER_USERNAME/sample-angular-app:0.0.0
-        
+
     - name: Subir Docker image
       run: |
         docker push $DOCKER_USERNAME/sample-angular-app:0.0.0 
