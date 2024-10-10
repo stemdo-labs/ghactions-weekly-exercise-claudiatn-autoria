@@ -1,23 +1,26 @@
 name: Workflow principal
 on:
   workflow_dispatch:
-
-env:
-  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+  push:
+    branches:
+      - main
+      - development
 
 jobs:
   entorno:
     runs-on: ubuntu
     steps:
-      - name: imprimir
+      - name: Imprimir entorno
         run: |
-          echo El entorno es $ENVIRONMET
+          echo "El entorno es ${{ env.ENVIRONMENT }}"
+        env:
+          ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'uat' }}
       
-  call-workflow-ci:
-    uses: ./.github/workflows/ci-build-push-docker-image.yaml
-    secrets: inherit 
+#  call-workflow-ci:
+#    uses: ./.github/workflows/ci-build-push-docker-image.yaml
+#    secrets: inherit 
 
-  call-workflow-cd:
-    needs: call-workflow-ci
-    uses: ./.github/workflows/cd-deply-verify.yaml
-    secrets: inherit 
+#  call-workflow-cd:
+#    needs: call-workflow-ci
+#    uses: ./.github/workflows/cd-deply-verify.yaml
+#    secrets: inherit 
