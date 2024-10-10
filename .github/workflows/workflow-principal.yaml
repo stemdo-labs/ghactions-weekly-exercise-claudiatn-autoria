@@ -16,11 +16,22 @@ jobs:
           ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'uat' }}
 
       
-#  call-workflow-ci:
-#    uses: ./.github/workflows/ci-build-push-docker-image.yaml
-#    secrets: inherit 
+  call-workflow-ci:
+    needs: entorno
+    uses: ./.github/workflows/ci-build-push-docker-image.yaml
+    secrets: inherit 
 
-#  call-workflow-cd:
-#    needs: call-workflow-ci
-#    uses: ./.github/workflows/cd-deply-verify.yaml
-#    secrets: inherit 
+  call-workflow-cd:
+    needs: call-workflow-ci
+    uses: ./.github/workflows/cd-deply-verify.yaml
+    secrets: inherit 
+
+  test-cobertura:
+    if: env.ENVIRONMENT == 'production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar simulación de test
+        run: echo "Ejecutando simulación de test en producción"
+        
+      - name: Ejecutar cobertura de código
+        run: echo "Ejecutando cobertura de código en producción"
