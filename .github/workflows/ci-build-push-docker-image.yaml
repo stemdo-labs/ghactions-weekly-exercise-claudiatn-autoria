@@ -9,6 +9,8 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
   
+    outputs:
+      imagename: ${{ steps.taggear_image.outputs.tagged }}
       
     steps:
     - name: Checkout
@@ -42,8 +44,6 @@ jobs:
       run: |
         docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
     
-    outputs:
-      image_name: ${{ steps.taggear_image.outputs.tagged }}
 
       
       
