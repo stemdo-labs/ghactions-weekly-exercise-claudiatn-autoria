@@ -30,11 +30,6 @@ jobs:
 
        - name: Verificar si el contenedor está corriendo
          run: docker ps
-       
-       - name: Verificar logs del contenedor
-         run: |
-           docker logs $(docker ps -q --filter "ancestor=$DOCKER_USERNAME/sample-angular-app:0.0.0")
-
 
        - name: Verificar respuesta de la app
          run: |
