@@ -1,14 +1,11 @@
 name: Workflow principal
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - development
+ 
 
 jobs:
   entorno:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       - name: Imprimir rama del push
         run: echo "El push se realizó en la rama ${{ github.ref_name }}"
