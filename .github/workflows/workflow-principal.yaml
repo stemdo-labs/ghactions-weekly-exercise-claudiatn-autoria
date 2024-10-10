@@ -2,7 +2,17 @@ name: Workflow principal
 on:
   workflow_dispatch:
 
+env:
+  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+
 jobs:
+  entorno:
+    runs-on: ubuntu
+    steps:
+      - name: imprimir
+        run: |
+          echo El entorno es $ENVIRONMET
+      
   call-workflow-ci:
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
     secrets: inherit 
