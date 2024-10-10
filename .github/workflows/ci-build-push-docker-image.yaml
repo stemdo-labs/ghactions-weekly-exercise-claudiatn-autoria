@@ -13,14 +13,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: "Extraer versión"
-      id: version
-      shell: bash
-      run: |
-        version=$(jq -r '.version' ./package.json)
-        echo "Image version: $version"
-        echo  "version=${version}" >> $GITHUB_OUTPUT
     
     - name: Mandar inputs
       id: taggear_image
