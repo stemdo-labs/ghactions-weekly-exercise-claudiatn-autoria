@@ -19,5 +19,4 @@ jobs:
     - name: Nombre del tag
       run: |
         echo "El nombre de la imegen: ${{ steps.taggear_image.outputs.tagged }}"
-      if: success() 
 
