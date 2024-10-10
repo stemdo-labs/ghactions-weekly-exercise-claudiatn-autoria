@@ -1,0 +1,8 @@
+name: Workflow principal
+on:
+  workflow_dispatch:
+
+jobs:
+  call-workflow:
+    uses: ./.github/workflows/ci-build-push-docker-image.yaml
+  
