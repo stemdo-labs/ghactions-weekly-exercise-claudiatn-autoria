@@ -10,11 +10,8 @@ jobs:
   entorno:
     runs-on: ubuntu
     steps:
-      - name: Imprimir entorno
-        run: |
-          echo "El entorno es ${{ env.ENVIRONMENT }}"
-        env:
-          ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'uat' }}
+      - name: Imprimir rama del push
+        run: echo "El push se realizó en la rama ${{ github.ref_name }}"
 
       
 #  call-workflow-ci:
