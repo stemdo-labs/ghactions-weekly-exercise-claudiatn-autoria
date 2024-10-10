@@ -19,7 +19,6 @@ jobs:
       uses: ./.github/actions/taggear_image
       with:
         image_name: "mi-app-angular"
-        version: "${{ steps.version.outputs.version }}"
 
     - name: Nombre del tag
       run: |
