@@ -15,6 +15,7 @@ jobs:
           echo "El entorno es ${{ env.ENVIRONMENT }}"
         env:
           ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'uat' }}
+
       
 #  call-workflow-ci:
 #    uses: ./.github/workflows/ci-build-push-docker-image.yaml
