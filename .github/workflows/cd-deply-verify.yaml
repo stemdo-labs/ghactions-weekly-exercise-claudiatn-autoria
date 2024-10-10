@@ -26,7 +26,7 @@ jobs:
         
        - name: Desplegar
          run: |
-          docker run -d -p 8080:80 sample-angular-app:0.0.0
+          docker run -d -p 8080:80  $DOCKER_USERNAME/sample-angular-app:0.0.0
 
        - name: Verificar si el contenedor está corriendo
          run: docker ps
