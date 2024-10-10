@@ -8,9 +8,10 @@ jobs:
     environment: production
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+    outputs:
+      image_name: ${{ steps.taggear_image.outputs.tagged }}
       
     steps:
-
     - name: Checkout
       uses: actions/checkout@v3
     
@@ -22,7 +23,7 @@ jobs:
 
     - name: Nombre del tag
       run: |
-        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" >> $$GITHUB_ENV
+        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" 
         echo DOCKER_USERNAME = $DOCKER_USERNAME
 
 
