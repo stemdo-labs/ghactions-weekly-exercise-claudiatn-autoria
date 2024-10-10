@@ -35,6 +35,7 @@ jobs:
 
     - name: Build Docker image
       run: |
+        echo "IMAGE_NAME=$IMAGE_NAME"
         docker build -t cnten/$IMAGE_NAME .
         docker images
         
