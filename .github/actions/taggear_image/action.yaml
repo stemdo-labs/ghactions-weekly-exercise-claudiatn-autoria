@@ -21,9 +21,9 @@ runs:
       run: |
         tagged_image="${{ inputs.image_name }}:${{ inputs.version }}"
         echo "Tagged image: $tagged_image"
-        echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
+        echo "tagged=${tagged_image}" >> $GITHUB_ENV
         
     - name: Verificar tag
       shell: bash
       run: |
-        echo "El nombre de la imagen es: ${{ steps.taggear.outputs.tagged }}"
+        echo "El nombre de la imagen es: ${{ env.tagged }}"
