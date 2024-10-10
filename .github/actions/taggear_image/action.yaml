@@ -23,6 +23,6 @@ runs:
         echo "Tagged image: $tagged_image"
         echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
    
- - name: Verificar tag
+    - name: Verificar tag
       run: |
         echo "El nombre de la imagen es: ${{ steps.taggear.outputs.tagged }}"
