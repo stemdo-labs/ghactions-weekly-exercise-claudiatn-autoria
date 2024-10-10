@@ -18,4 +18,4 @@ runs:
       run: |
         tagged_image="${{ inputs.image_name }}:${{ inputs.version }}"
         echo "Tagged image: $tagged_image"
-        echo "$tagged_image" >> $GITHUB_OUTPUT
+        echo "tagged_image=$tagged_image" >> $GITHUB_OUTPUT
