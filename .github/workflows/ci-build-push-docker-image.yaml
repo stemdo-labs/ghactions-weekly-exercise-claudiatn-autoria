@@ -23,7 +23,7 @@ jobs:
 
     - name: Nombre del tag
       run: |
-        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_ENV
+        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
 
 
     - name: Hacer login en DockerHub
