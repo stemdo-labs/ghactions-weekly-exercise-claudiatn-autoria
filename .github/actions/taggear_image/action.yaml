@@ -22,4 +22,5 @@ runs:
         tagged_image="${{ inputs.image_name }}:${{ inputs.version }}"
         echo "Tagged image: $tagged_image"
         echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
+      if: success() 
         
