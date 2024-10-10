@@ -1,0 +1,11 @@
+name: Workflow principal
+on:
+  workflow_dispatch:
+
+jobs:
+  call-workflow-ci:
+    uses: ./.github/workflows/ci-build-push-docker-image.yaml
+
+  call-workflow-cd:
+    needs: call-workflow-ci
+    uses: ./.github/workflows/cd-deplu-verify.yaml
