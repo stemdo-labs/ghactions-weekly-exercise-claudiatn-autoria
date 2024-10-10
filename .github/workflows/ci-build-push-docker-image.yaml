@@ -10,6 +10,7 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Taggear imagen Docker
+      id: taggear_image
       uses: ./.github/actions
       with:
         image_name: "mi-app-angular"
@@ -17,5 +18,5 @@ jobs:
 
     - name: Nombre del tag
       run: |
-        echo "El nombre de la imegen: ${{ steps.taggear.outputs.tagged_image }}"
+        echo "El nombre de la imegen: ${{ steps.taggear_image.outputs.tagged_image }}"
 
