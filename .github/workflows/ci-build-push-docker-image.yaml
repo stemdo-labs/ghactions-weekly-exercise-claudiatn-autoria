@@ -40,6 +40,6 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t username/sample-angular-app:latest .
-        docker ps -a
+        docker images
       
 
