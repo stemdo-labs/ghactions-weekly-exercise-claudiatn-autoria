@@ -19,7 +19,7 @@ jobs:
        - name: Imprimir
          run: |
           echo  $DOCKER_USERNAME
-          echo  $IMAGE_NAME
+          echo "Image Name: $IMAGE_NAME" 
           
     #
     #     run: |
