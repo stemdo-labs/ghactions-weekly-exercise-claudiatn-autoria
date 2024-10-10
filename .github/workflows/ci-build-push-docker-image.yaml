@@ -11,7 +11,7 @@ jobs:
     
     - name: Taggear imagen Docker
       id: taggear_image
-      uses: ./.github/actions
+      uses: ./.github/actions/taggear_image
       with:
         image_name: "mi-app-angular"
         version: "1.0.0"
