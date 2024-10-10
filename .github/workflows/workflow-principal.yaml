@@ -9,11 +9,18 @@ jobs:
     steps:
       - name: Imprimir rama del push
         run: echo "El push se realizó en la rama ${{ github.ref_name }}"
-      - name: Imprimir entorno
+        
+      - name: Definir entorno
+        id: set-env
         run: |
-          echo "El entorno es ${{ env.ENVIRONMENT }}"
-        env:
-          ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'uat' }}
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=uat" >> $GITHUB_ENV
+          fi
+      
+      - name: Imprimir entorno
+        run: echo "El entorno es $ENVIRONMENT"
 
       
   call-workflow-ci:
@@ -27,6 +34,7 @@ jobs:
     secrets: inherit 
 
   test-cobertura:
+    needs: entorno
     if: env.ENVIRONMENT == 'production'
     runs-on: ubuntu-latest
     steps:
