@@ -9,7 +9,10 @@ jobs:
 
   call-workflow-cd:
     needs: call-workflow-ci
-    uses: ./.github/workflows/cd-deply-verify.yaml
-    secrets: inherit 
-    with:
-      image_name: ${{ needs.call-workflow-ci.outputs.image_name }}
+
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar output CI
+        run: |
+          echo "Output de CI: ${{ needs.call-workflow-ci.outputs.image_name }}"
