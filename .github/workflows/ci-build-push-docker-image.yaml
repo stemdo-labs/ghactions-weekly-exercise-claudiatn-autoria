@@ -1,0 +1,21 @@
+name: CI
+on:
+  workflow_dispatch:
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Taggear imagen Docker
+      uses: ./.github/actions
+      with:
+        image_name: "mi-app-angular"
+        version: "1.0.0"
+
+    - name: Nombre del tag
+      run: |
+        echo "El nombre de la imegen: ${{ steps.taggear.outputs.tagged_image }}"
+
