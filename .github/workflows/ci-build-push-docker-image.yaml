@@ -23,6 +23,7 @@ jobs:
     - name: Nombre del tag
       run: |
         echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" >> $$GITHUB_ENV
+        echo DOCKER_USERNAME = $DOCKER_USERNAME
 
 
     - name: Hacer login en DockerHub
@@ -33,7 +34,6 @@ jobs:
 
     - name: Build Docker image
       run: |
-        echo DOCKER_USERNAME = $DOCKER_USERNAME
         docker build -t $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }} .
         docker images
         
