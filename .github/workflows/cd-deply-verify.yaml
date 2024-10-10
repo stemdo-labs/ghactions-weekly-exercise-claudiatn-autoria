@@ -33,6 +33,7 @@ jobs:
 
        - name: Verificar respuesta de la app
          run: |
+           sleep 10
            curl http://localhost:8080
 
 
