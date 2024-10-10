@@ -12,6 +12,10 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     
     steps:
+    - name: Limpiar caché
+      run: |
+        sudo rm -rf /var/lib/docker
+
     - name: Checkout
       uses: actions/checkout@v3
     
