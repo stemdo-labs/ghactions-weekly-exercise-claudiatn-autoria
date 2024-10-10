@@ -22,4 +22,18 @@ jobs:
        - name: Pull Docker image from DockerHub
          run: |
            docker pull $DOCKER_USERNAME/sample-angular-app:0.0.0
+
+        
+       - name: Desplegar
+         run: |
+          docker run -d -p 8080:80 sample-angular-app:0.0.0
+
+       - name: Verificar si el contenedor está corriendo
+         run: docker ps
+
+       - name: Verificar respuesta de la app
+         run: |
+           curl http://localhost:8080
+
+
         
