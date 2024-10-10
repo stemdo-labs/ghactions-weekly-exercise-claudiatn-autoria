@@ -11,3 +11,5 @@ jobs:
     needs: call-workflow-ci
     uses: ./.github/workflows/cd-deply-verify.yaml
     secrets: inherit 
+    with:
+      image_name: ${{ jobs.call-workflow-ci.outputs.image_name }}
