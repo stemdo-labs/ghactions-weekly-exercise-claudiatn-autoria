@@ -21,7 +21,5 @@ runs:
       run: |
         tagged_image="${{ inputs.image_name }}:${{ inputs.version }}"
         echo "Tagged image: $tagged_image"
-        echo "tagged=$tagged_image" >> $GITHUB_OUTPUT
-      env:
-         tagged: tagged
+        echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
         
