@@ -35,7 +35,7 @@ jobs:
 
   test-cobertura:
     needs: entorno
-    if: env.ENVIRONMENT == 'production'
+    if: ${{ env.ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
     steps:
       - name: Ejecutar simulación de test
