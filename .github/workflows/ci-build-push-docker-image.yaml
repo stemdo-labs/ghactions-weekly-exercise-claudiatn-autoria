@@ -44,7 +44,7 @@ jobs:
         
     - name: Subir Docker image
       run: |
-        docker push username/sample-angular-app:latest .
+        docker push username/sample-angular-app:latest 
 
       
       
