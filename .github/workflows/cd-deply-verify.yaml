@@ -19,7 +19,7 @@ jobs:
        - name: Imprimir
          run: |
           echo  $DOCKER_USERNAME
-          echo ${{env.IMAGE_NAME}}
+          echo  $IMAGE_NAME
           
     #
     #     run: |
