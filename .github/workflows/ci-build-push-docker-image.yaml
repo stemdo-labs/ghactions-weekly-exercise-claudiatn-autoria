@@ -18,7 +18,7 @@ jobs:
       id: taggear_image
       uses: ./.github/actions/taggear_image
       with:
-        image_name: "mi-app-angular"
+        image_name: "sample-angular-app"
 
     - name: Nombre del tag
       run: |
