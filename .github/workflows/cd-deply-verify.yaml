@@ -9,25 +9,19 @@ jobs:
      
      env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-      IMAGE_NAME: ${{ inputs.image_name }}
 
      steps:
        - name: Imprimir
          run: |
-          echo  $DOCKER_USERNAME
-          echo "Image Name: $IMAGE_NAME" 
-          
-    #
-    #     run: |
-    #      docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
+          docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
 
-    #   - name: Verificar si el contenedor está corriendo
-    #     run: docker ps
+       - name: Verificar si el contenedor está corriendo
+         run: docker ps
 
-    #   - name: Verificar respuesta de la app
-    #     run: |
-    #       sleep 40
-    #       curl http://localhost:8080
+       - name: Verificar respuesta de la app
+         run: |
+           sleep 40
+           curl http://localhost:8080
 
 
         
