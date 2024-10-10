@@ -42,12 +42,12 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/sample-angular-app:0.0.0 .
+        docker build -t $DOCKER_USERNAME/sample-angular-app/sample-angular-app:0.0.0 .
         docker images
         
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/sample-angular-app:0.0.0 
+        docker push $DOCKER_USERNAME/sample-angular-app/sample-angular-app:0.0.0 
 
       
       
