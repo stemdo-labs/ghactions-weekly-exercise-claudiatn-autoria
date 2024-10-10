@@ -35,14 +35,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        echo "IMAGE_NAME=$IMAGE_NAME"
-        docker build -t cnten/$IMAGE_NAME .
+        docker build -t cnten/${{ steps.taggear_image.outputs.tagged }} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push cnten/$IMAGE_NAME
+        docker push cnten/${{ steps.taggear_image.outputs.tagged }}
 
       
       
