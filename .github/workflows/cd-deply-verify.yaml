@@ -8,20 +8,25 @@ jobs:
      environment: production
      
      env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
 
      steps:
-       - name: Desplegar
+       - name: Imprimir
          run: |
-          docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
+          echo  $DOCKER_USERNAME
+          echo ${{env.IMAGE_NAME}}
+          
+    #
+    #     run: |
+    #      docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
 
-       - name: Verificar si el contenedor está corriendo
-         run: docker ps
+    #   - name: Verificar si el contenedor está corriendo
+    #     run: docker ps
 
-       - name: Verificar respuesta de la app
-         run: |
-           sleep 40
-           curl http://localhost:8080
+    #   - name: Verificar respuesta de la app
+    #     run: |
+    #       sleep 40
+    #       curl http://localhost:8080
 
 
         
