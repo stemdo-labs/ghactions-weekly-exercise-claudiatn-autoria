@@ -41,5 +41,11 @@ jobs:
       run: |
         docker build -t username/sample-angular-app:latest .
         docker images
+        
+    - name: Subir Docker image
+      run: |
+        docker push username/sample-angular-app:latest .
+
+      
       
 
