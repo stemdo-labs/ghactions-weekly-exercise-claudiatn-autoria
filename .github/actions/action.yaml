@@ -1,4 +1,5 @@
 name: "Taggear Imagen de docker"
+
 inputs:
   image_name:
     description: "Nombre de la imagen"
@@ -6,9 +7,11 @@ inputs:
   version:
     description: "Versión de la imagen"
     required: true
+    
 outputs:
-  tagged_image:
+  tagged:
     description: "Nombre completo para la imagen taggeada"
+
 runs:
   using: "composite"
   steps:
@@ -18,4 +21,4 @@ runs:
       run: |
         tagged_image="${{ inputs.image_name }}:${{ inputs.version }}"
         echo "Tagged image: $tagged_image"
-        echo "tagged_image=$tagged_image" >> $GITHUB_OUTPUT
+        echo "tagged=$tagged_image" >> $GITHUB_OUTPUT
