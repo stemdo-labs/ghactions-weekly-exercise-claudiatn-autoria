@@ -11,7 +11,11 @@ jobs:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
 
      steps:
-       - name: Imprimir
+       - name: Hacer pull de la imagen de Docker
+         run: |
+          docker pull $DOCKER_USERNAME/sample-angular-app:0.0.0
+          
+       - name: Desplegar
          run: |
           docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
 
