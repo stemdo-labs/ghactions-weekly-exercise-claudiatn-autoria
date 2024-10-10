@@ -15,7 +15,7 @@ jobs:
         image_name: "mi-app-angular"
         version: "1.0.0"
 
-    - name: Show tagged image
+    - name: Nombre del tag
       run: |
-        echo "Le nombre de la imegen: ${{ steps.taggear.outputs.tagged_image }}"
+        echo "El nombre de la imegen: ${{ steps.taggear.outputs.tagged_image }}"
 
