@@ -6,6 +6,8 @@ on:
 jobs:
   entorno:
     runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }} 
     steps:
       - name: Imprimir rama del push
         run: echo "El push se realizó en la rama ${{ github.ref_name }}"
@@ -14,27 +16,27 @@ jobs:
         id: set-env
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "environment=production" >> $GITHUB_OUTPUT
           else
-            echo "ENVIRONMENT=uat" >> $GITHUB_ENV
+            echo "environment=uat" >> $GITHUB_OUTPUT
           fi
       
       - name: Imprimir entorno
-        run: echo "El entorno es $ENVIRONMENT"
+        run: echo "El entorno es $environment"
 
       
   call-workflow-ci:
     needs: entorno
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
     with:
-      environment: ${{ env.ENVIRONMENT }} 
+      environment: ${{ needs.entorno.outputs.environment }}
     secrets: inherit 
 
   call-workflow-cd:
     needs: call-workflow-ci
     uses: ./.github/workflows/cd-deply-verify.yaml
     with:
-      environment: ${{ env.ENVIRONMENT }} 
+      environment: ${{ needs.entorno.outputs.environment }}
     secrets: inherit 
 
   test-cobertura:
