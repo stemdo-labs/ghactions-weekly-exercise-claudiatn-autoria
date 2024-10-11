@@ -16,6 +16,10 @@ jobs:
     if:  ${{ inputs.environment }} == production
     runs-on: ubuntu-latest
     steps:
+      - name: Imprimir el valor del input environment
+        run: |
+          echo "El entorno recibido es: ${{ inputs.environment }}"
+          
       - name: Ejecutar simulación de test
         run: | 
           sleep 20
