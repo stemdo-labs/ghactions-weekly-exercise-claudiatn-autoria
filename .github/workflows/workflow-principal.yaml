@@ -19,7 +19,7 @@ jobs:
          image_name: "sample-angular-app"
          
      - name: Guardar el nombre de la imagen
-       run: echo "IMAGE_NAME=${{ steps.taggear_image.outputs.image_name }}" >> $GITHUB_OUTPUT
+       run: echo "image_name=${{ steps.taggear_image.outputs.image_name }}" >> $GITHUB_OUTPUT
 
   entorno:
     runs-on: ubuntu-latest
