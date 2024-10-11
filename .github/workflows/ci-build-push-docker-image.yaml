@@ -22,8 +22,7 @@ jobs:
     - name: Mandar inputs
       id: taggear_image
       uses: ./.github/actions/taggear_image
-      with:
-         image_name: "sample-angular-app"
+  
          
     - name: Guardar el nombre de la imagen
       run: |
