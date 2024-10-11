@@ -13,7 +13,6 @@ on:
   
 jobs:
   tests-app:
-    needs:  build-app
     if:  ${{ inputs.environment }} == production
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +28,7 @@ jobs:
           
   build-app:
     runs-on: ubuntu-latest
+    needs: tests-app
     environment: ${{inputs.environment}}
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
