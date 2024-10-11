@@ -34,7 +34,7 @@ jobs:
     secrets: inherit 
 
   test-cobertura:
-    needs: [entorno, call-workflow-ci]
+    needs: [entorno, call-workflow-cd]
     if:  ${{ github.ref_name }} == main
     runs-on: ubuntu-latest
     steps:
