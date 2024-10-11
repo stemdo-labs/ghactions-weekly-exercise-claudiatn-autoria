@@ -33,10 +33,10 @@ jobs:
     secrets: inherit 
    
   call-workflow-cd:
-    needs: call-workflow-ci
+    needs: [entorno,call-workflow-ci]
     uses: ./.github/workflows/cd-deply-verify.yaml
     with:
-      environment: ${{ needs.call-workflow-ci.outputs.environment }} 
+      environment: ${{ needs.entorno.outputs.environment }}
     secrets: inherit 
 
   test-cobertura:
