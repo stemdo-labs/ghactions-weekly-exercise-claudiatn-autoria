@@ -30,7 +30,6 @@ jobs:
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
-      image_name: ${{needs.tag.outputs.image_name}}
     secrets: inherit 
    
   call-workflow-cd:
@@ -38,7 +37,6 @@ jobs:
     uses: ./.github/workflows/cd-deply-verify.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
-      image_name: ${{needs.tag.outputs.image_name}}
     secrets: inherit 
 
  
