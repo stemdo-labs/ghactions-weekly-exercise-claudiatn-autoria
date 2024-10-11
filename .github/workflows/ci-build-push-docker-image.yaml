@@ -5,10 +5,7 @@ on:
       environment:
         type: string
         required: true
-        
-      image_name:
-        type: string
-        required: true
+
   
 jobs:
   build-app:
@@ -19,12 +16,24 @@ jobs:
       
       
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Mandar inputs
+      id: taggear_image
+      uses: ./.github/actions/taggear_image
+      with:
+         image_name: "sample-angular-app"
+         
+    - name: Guardar el nombre de la imagen
+      run: |
+         echo "image_name=${{ steps.taggear_image.outputs.image_name }}" >> $GITHUB_OUTPUT
+       
     - name: Imprimir valores de entrada
       run: |
             echo "El entorno recibido es: ${{ inputs.environment }}"
             echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
-    
-  
+
 
     - name: Nombre del tag
       id: set_image_name
@@ -48,6 +57,21 @@ jobs:
     - name: Subir Docker image
       run: |
         docker push $DOCKER_USERNAME/${{ inputs.image_name }}
+
+  test-cobertura:
+    needs:  build-app
+    if:  ${{ inputs.environment }} == production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar simulación de test
+        run: | 
+          sleep 20
+          echo "Ejecutando simulación de test en producción"
+        
+      - name: Ejecutar cobertura de código
+        run: | 
+          sleep 20
+          echo "Ejecutando cobertura de código en producción"
     
 
       
