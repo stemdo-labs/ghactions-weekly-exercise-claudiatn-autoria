@@ -43,13 +43,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/${{IMAGE_NAME}} .
+        docker build -t $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/${{IMAGE_NAME}}
+        docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
 
   test-cobertura:
     needs:  build-app
