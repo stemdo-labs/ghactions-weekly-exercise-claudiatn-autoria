@@ -6,6 +6,10 @@ on:
         type: string
         required: true
 
+    outputs:
+      tag:
+        value: ${{ jobs.build-app.outputs.image_name }}
+
   
 jobs:
   build-app:
