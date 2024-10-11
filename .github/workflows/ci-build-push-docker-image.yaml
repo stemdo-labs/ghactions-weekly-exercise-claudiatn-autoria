@@ -1,11 +1,15 @@
 name: CI
 on:
   workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
   
 jobs:
   build-app:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{inputs.environment}}
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       
