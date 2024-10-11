@@ -17,6 +17,11 @@ jobs:
       final_image_name: ${{ steps.set_image_name.outputs.image_name }}
       
     steps:
+    - name: Imprimir valores de entrada
+      run: |
+            echo "El entorno recibido es: ${{ inputs.environment }}"
+            echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
+    
     - name: Checkout
       uses: actions/checkout@v3
     
