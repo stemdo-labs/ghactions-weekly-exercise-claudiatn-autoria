@@ -12,6 +12,21 @@ on:
 
   
 jobs:
+  tests-app:
+    needs:  build-app
+    if:  ${{ inputs.environment }} == production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar simulación de test
+        run: | 
+          sleep 20
+          echo "Ejecutando simulación de test en producción"
+        
+      - name: Ejecutar cobertura de código
+        run: | 
+          sleep 20
+          echo "Ejecutando cobertura de código en producción"
+          
   build-app:
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
@@ -57,20 +72,7 @@ jobs:
       run: |
         docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
 
-  test-cobertura:
-    needs:  build-app
-    if:  ${{ inputs.environment }} == production
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ejecutar simulación de test
-        run: | 
-          sleep 20
-          echo "Ejecutando simulación de test en producción"
-        
-      - name: Ejecutar cobertura de código
-        run: | 
-          sleep 20
-          echo "Ejecutando cobertura de código en producción"
+ 
     
 
       
