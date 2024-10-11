@@ -25,7 +25,7 @@ jobs:
   
     - name: Nombre del tag
       run: |
-        echo image_name="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
+        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
 
        
     - name: Imprimir valores de entrada
@@ -42,13 +42,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/${{image_name}} .
+        docker build -t $DOCKER_USERNAME/${{IMAGE_NAME}} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/${{image_name}}
+        docker push $DOCKER_USERNAME/${{IMAGE_NAME}}
 
   test-cobertura:
     needs:  build-app
