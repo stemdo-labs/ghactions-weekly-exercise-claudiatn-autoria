@@ -34,7 +34,6 @@ jobs:
             echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
 
 
-
     - name: Hacer login en DockerHub
       uses: docker/login-action@v3
       with:
@@ -43,13 +42,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/${{ inputs.image_name }} .
+        docker build -t $DOCKER_USERNAME/${{ image_name }} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/${{ inputs.image_name }}
+        docker push $DOCKER_USERNAME/${{ image_name }}
 
   test-cobertura:
     needs:  build-app
