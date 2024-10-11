@@ -26,11 +26,15 @@ jobs:
   call-workflow-ci:
     needs: entorno
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
+    with:
+      environment: ${{ env.ENVIRONMENT }} 
     secrets: inherit 
 
   call-workflow-cd:
     needs: call-workflow-ci
     uses: ./.github/workflows/cd-deply-verify.yaml
+    with:
+      environment: ${{ env.ENVIRONMENT }} 
     secrets: inherit 
 
   test-cobertura:
