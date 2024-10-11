@@ -5,6 +5,10 @@ on:
       environment:
         type: string
         required: true
+        
+      image_name:
+        type: string
+        required: true
   
 jobs:
   build-app:
@@ -13,9 +17,6 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       
-    outputs:
-      environment: ${{ inputs.environment }} 
-      final_image_name: ${{ steps.set_image_name.outputs.image_name }}
       
     steps:
     - name: Imprimir valores de entrada
@@ -23,20 +24,13 @@ jobs:
             echo "El entorno recibido es: ${{ inputs.environment }}"
             echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
     
-    - name: Checkout
-      uses: actions/checkout@v3
-    
-    - name: Mandar inputs
-      id: taggear_image
-      uses: ./.github/actions/taggear_image
-      with:
-        image_name: "sample-angular-app"
+  
 
     - name: Nombre del tag
       id: set_image_name
       run: |
-        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" 
-        echo "image_name=${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
+        echo IMAGE_NAME="${{ inputs.image_name }}" 
+        echo "image_name=${{ input.image_name }}" >> $GITHUB_OUTPUT
         echo DOCKER_USERNAME = $DOCKER_USERNAME
 
 
@@ -48,13 +42,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }} .
+        docker build -t $DOCKER_USERNAME/${{ inputs.image_name }} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
+        docker push $DOCKER_USERNAME/${{ inputs.image_name }}
     
 
       
