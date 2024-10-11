@@ -1,5 +1,10 @@
 name: Workflow principal
 on:
+  push:
+    branches:
+      - main
+      - development
+      
   workflow_dispatch:
  
 
