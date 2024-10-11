@@ -19,26 +19,20 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     
-    - name: Mandar inputs
+    - name: Action tag
       id: taggear_image
       uses: ./.github/actions/taggear_image
   
-         
-    - name: Guardar el nombre de la imagen
+    - name: Nombre del tag
       run: |
-         echo "image_name=${{ steps.taggear_image.outputs.image_name }}" >> $GITHUB_OUTPUT
+        echo imagen_name="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
+
        
     - name: Imprimir valores de entrada
       run: |
             echo "El entorno recibido es: ${{ inputs.environment }}"
             echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
 
-
-    - name: Nombre del tag
-      id: set_image_name
-      run: |
-        echo image_name="${{ inputs.image_name }}" 
-        echo DOCKER_USERNAME = $DOCKER_USERNAME
 
 
     - name: Hacer login en DockerHub
