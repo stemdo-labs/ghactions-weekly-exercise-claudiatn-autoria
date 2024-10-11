@@ -29,7 +29,7 @@ jobs:
     - name: Nombre del tag
       id: set_image_name
       run: |
-        echo IMAGE_NAME="${{ inputs.image_name }}" 
+        echo image_name="${{ inputs.image_name }}" 
         echo "image_name=${{ inputs.image_name }}" >> $GITHUB_OUTPUT
         echo DOCKER_USERNAME = $DOCKER_USERNAME
 
