@@ -16,19 +16,19 @@ runs:
         echo "Image version: $version"
         echo  "version=${version}" >> $GITHUB_OUTPUT
 
-    - name: "Extraer nombre de la imagen"
-      id: image_name
+    - name: "Extraer nombre de la app"
+      id: app_name
       shell: bash
       run: |
         image_name=$(jq -r '.name' ./package.json)
-        echo "Image name: $image_name"
-        echo "image_name=${image_name}" >> $GITHUB_OUTPUT
+        echo "App name: $app_name"
+        echo "App_name=${app_name}" >> $GITHUB_OUTPUT
         
     - name: "Nombre completo Imagen"
       id: taggear
       shell: bash
       run: |
-        tagged_image="${{  steps.image_name.outputs.image_name }}:${{ steps.version.outputs.version}}"
+        tagged_image="${{  steps.app_name.outputs.app_name }}:${{ steps.version.outputs.version}}"
         echo "Tagged image: $tagged_image"
         echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
   
