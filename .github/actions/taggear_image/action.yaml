@@ -20,7 +20,7 @@ runs:
       id: app_name
       shell: bash
       run: |
-        image_name=$(jq -r '.name' ./package.json)
+        app_name=$(jq -r '.name' ./package.json)
         echo "App name: $app_name"
         echo "App_name=${app_name}" >> $GITHUB_OUTPUT
         
