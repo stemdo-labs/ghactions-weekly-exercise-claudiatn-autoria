@@ -1,11 +1,15 @@
 name: CD
 on:
   workflow_call:
+     inputs:
+      environment:
+        type: string
+        required: true
 
 jobs:
   upload-image:
      runs-on: ubuntu-latest
-     environment: production
+     environment: ${{ inputs.environment }} 
      
      env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
