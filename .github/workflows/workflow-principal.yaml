@@ -4,6 +4,23 @@ on:
  
 
 jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image_name: ${{ steps.taggear_image.outputs.image_name }} 
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v3
+    
+     - name: Mandar inputs
+       id: taggear_image
+       uses: ./.github/actions/taggear_image
+       with:
+         image_name: "sample-angular-app"
+         
+     - name: Guardar el nombre de la imagen
+       run: echo "IMAGE_NAME=${{ steps.taggear_image.outputs.image_name }}" >> $GITHUB_OUTPUT
+
   entorno:
     runs-on: ubuntu-latest
     outputs:
@@ -26,17 +43,19 @@ jobs:
 
       
   call-workflow-ci:
-    needs: entorno
+    needs: [entorno,tag]
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
+      image_name: ${{needs.tag.outputs.image_name}}
     secrets: inherit 
    
   call-workflow-cd:
-    needs: [entorno,call-workflow-ci]
+    needs: [entorno,call-workflow-ci, tag]
     uses: ./.github/workflows/cd-deply-verify.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
+      image_name: ${{needs.tag.outputs.image_name}}
     secrets: inherit 
 
   test-cobertura:
