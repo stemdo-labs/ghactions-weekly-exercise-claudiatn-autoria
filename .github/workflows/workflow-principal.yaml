@@ -37,6 +37,7 @@ jobs:
     uses: ./.github/workflows/cd-deply-verify.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
+      tag: ${{ needs.call-workflow-ci.outputs.tag }}
     secrets: inherit 
-
+      
  
