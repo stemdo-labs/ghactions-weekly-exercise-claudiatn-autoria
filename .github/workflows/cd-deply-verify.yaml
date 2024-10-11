@@ -25,11 +25,11 @@ jobs:
           
       - name: Hacer pull de la imagen de Docker
         run: |
-          docker pull $DOCKER_USERNAME/ ${{ inputs.tag }}"
+          docker pull $DOCKER_USERNAME/${{ inputs.tag }}"
           
       - name: Desplegar
         run: |
-          docker run -d -p 8080:8080  $DOCKER_USERNAME/ ${{ inputs.tag }}"
+          docker run -d -p 8080:8080  $DOCKER_USERNAME/${{ inputs.tag }}"
 
       - name: Verificar si el contenedor está corriendo
         run: docker ps
