@@ -22,7 +22,7 @@ jobs:
           fi
       
       - name: Imprimir entorno
-        run: echo "El entorno es $environment"
+        run: echo "El entorno es ${{ needs.entorno.outputs.environment }}"
 
       
   call-workflow-ci:
