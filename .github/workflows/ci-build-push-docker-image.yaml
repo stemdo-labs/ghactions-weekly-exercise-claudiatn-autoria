@@ -13,7 +13,7 @@ on:
   
 jobs:
   tests-app:
-    if:  ${{ inputs.environment }} == production
+    if: ${{ inputs.environment == 'production' }}
     runs-on: ubuntu-latest
     steps:
       - name: Ejecutar simulación de test
