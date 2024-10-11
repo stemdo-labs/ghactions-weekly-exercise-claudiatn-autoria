@@ -1,29 +1,41 @@
 name: CD
 on:
   workflow_call:
-
+     inputs:
+      environment:
+        type: string
+        required: true
+      tag:
+        type: string
+        required: true
+        
 jobs:
   upload-image:
      runs-on: ubuntu-latest
-     environment: production
+     environment: ${{ inputs.environment }} 
      
      env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
 
      steps:
-       - name: Hacer pull de la imagen de Docker
-         run: |
-          docker pull $DOCKER_USERNAME/sample-angular-app:0.0.0
+      - name: Imprimir valores de entrada
+        run: |
+            echo "El entorno recibido es: ${{ inputs.environment }}"
+            echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
           
-       - name: Desplegar
-         run: |
-          docker run -d -p 8080:8080  $DOCKER_USERNAME/sample-angular-app:0.0.0
+      - name: Hacer pull de la imagen de Docker
+        run: |
+          docker pull $DOCKER_USERNAME/${{ inputs.tag }}
+          
+      - name: Desplegar
+        run: |
+          docker run -d -p 8080:8080  $DOCKER_USERNAME/${{ inputs.tag }}
 
-       - name: Verificar si el contenedor está corriendo
-         run: docker ps
+      - name: Verificar si el contenedor está corriendo
+        run: docker ps
 
-       - name: Verificar respuesta de la app
-         run: |
+      - name: Verificar respuesta de la app
+        run: |
            sleep 40
            curl http://localhost:8080
 

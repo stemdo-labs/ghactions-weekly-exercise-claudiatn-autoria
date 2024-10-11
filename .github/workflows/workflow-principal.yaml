@@ -1,11 +1,18 @@
 name: Workflow principal
 on:
+  push:
+    branches:
+      - main
+      - development
+      
   workflow_dispatch:
  
 
 jobs:
   entorno:
     runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }} 
     steps:
       - name: Imprimir rama del push
         run: echo "El push se realizó en la rama ${{ github.ref_name }}"
@@ -14,32 +21,28 @@ jobs:
         id: set-env
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "environment=production" >> $GITHUB_OUTPUT
           else
-            echo "ENVIRONMENT=uat" >> $GITHUB_ENV
+            echo "environment=uat" >> $GITHUB_OUTPUT
           fi
       
       - name: Imprimir entorno
-        run: echo "El entorno es $ENVIRONMENT"
+        run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
 
       
   call-workflow-ci:
-    needs: entorno
+    needs: [entorno]
     uses: ./.github/workflows/ci-build-push-docker-image.yaml
+    with:
+      environment: ${{ needs.entorno.outputs.environment }}
     secrets: inherit 
-
+   
   call-workflow-cd:
-    needs: call-workflow-ci
+    needs: [entorno,call-workflow-ci]
     uses: ./.github/workflows/cd-deply-verify.yaml
+    with:
+      environment: ${{ needs.entorno.outputs.environment }}
+      tag: ${{ needs.call-workflow-ci.outputs.tag }}
     secrets: inherit 
-
-  test-cobertura:
-    needs: [entorno, call-workflow-cd]
-    if:  ${{ github.ref_name }} == main
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ejecutar simulación de test
-        run: echo "Ejecutando simulación de test en producción"
-        
-      - name: Ejecutar cobertura de código
-        run: echo "Ejecutando cobertura de código en producción"
+      
+ 

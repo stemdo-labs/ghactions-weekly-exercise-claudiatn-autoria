@@ -1,33 +1,59 @@
 name: CI
 on:
   workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+
+    outputs:
+      tag:
+        value: ${{ jobs.build-app.outputs.image_name }}
+
   
 jobs:
+  tests-app:
+    needs:  build-app
+    if:  ${{ inputs.environment }} == production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar simulación de test
+        run: | 
+          sleep 20
+          echo "Ejecutando simulación de test en producción"
+        
+      - name: Ejecutar cobertura de código
+        run: | 
+          sleep 20
+          echo "Ejecutando cobertura de código en producción"
+          
   build-app:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{inputs.environment}}
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       
     outputs:
-      final_image_name: ${{ steps.set_image_name.outputs.image_name }}
+      image_name: ${{ steps.taggear_image.outputs.tagged }}
+      
       
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     
-    - name: Mandar inputs
+    - name: Action tag
       id: taggear_image
       uses: ./.github/actions/taggear_image
-      with:
-        image_name: "sample-angular-app"
-
+  
     - name: Nombre del tag
-      id: set_image_name
       run: |
-        echo IMAGE_NAME="${{ steps.taggear_image.outputs.tagged }}" 
-        echo "image_name=${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
-        echo DOCKER_USERNAME = $DOCKER_USERNAME
+        echo image_name="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
+
+       
+    - name: Imprimir valores de entrada
+      run: |
+            echo "El entorno recibido es: ${{ inputs.environment }}"
+            echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
 
 
     - name: Hacer login en DockerHub
@@ -45,6 +71,8 @@ jobs:
     - name: Subir Docker image
       run: |
         docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
+
+ 
     
 
       
