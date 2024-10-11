@@ -13,7 +13,8 @@ jobs:
     environment: ${{inputs.environment}}
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-      
+    outputs:
+      IMAGE_NAME: ${{ steps.taggear_image.outputs.tagged }}
       
     steps:
     - name: Checkout
