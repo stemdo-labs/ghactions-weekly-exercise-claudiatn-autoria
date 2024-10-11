@@ -5,14 +5,7 @@ on:
       environment:
         type: string
         required: true
-      
-  name: CD
-on:
-  workflow_call:
-     inputs:
-      environment:
-        type: string
-        required: true
+        
       outputs:
       tag:
         value: ${{ jobs.build-app.outputs.image_name }}
