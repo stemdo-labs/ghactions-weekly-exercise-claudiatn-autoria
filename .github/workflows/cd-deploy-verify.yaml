@@ -22,6 +22,8 @@ jobs:
         run: |
             echo "El entorno recibido es: ${{ inputs.environment }}"
             echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
+            echo "El tag de la imagen es: ${{ inputs.tag }}"
+
           
       - name: Hacer pull de la imagen de Docker
         run: |
