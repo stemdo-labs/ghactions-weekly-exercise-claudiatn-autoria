@@ -4,7 +4,7 @@ outputs:
   tagged:
     description: "Nombre completo para la imagen taggeada"
     value: "${{steps.taggear.outputs.tagged}}"
-
+    
 runs:
   using: "composite"
   steps:

@@ -36,7 +36,7 @@ jobs:
    
   call-workflow-cd:
     needs: [entorno,call-workflow-ci]
-    uses: ./.github/workflows/cd-deply-verify.yaml
+    uses: ./.github/workflows/cd-deploy-verify.yaml
     with:
       environment: ${{ needs.entorno.outputs.environment }}
       tag: ${{ needs.call-workflow-ci.outputs.tag }}

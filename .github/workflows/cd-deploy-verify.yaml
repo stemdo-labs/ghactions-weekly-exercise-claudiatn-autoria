@@ -10,7 +10,7 @@ on:
         required: true
         
 jobs:
-  upload-image:
+  deploy:
      runs-on: ubuntu-latest
      environment: ${{ inputs.environment }} 
      
