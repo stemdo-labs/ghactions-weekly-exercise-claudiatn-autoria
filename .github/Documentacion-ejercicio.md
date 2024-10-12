@@ -1,14 +1,14 @@
 ## 1. Creación de Entornos
 
-Primero, configuré dos entornos diferentes en el proyecto, Production y UAT, desde Settings > Environment. 
-Para poder crear estos entornos, fue necesario cambiar el repositorio a público.
+Primero, se configuran dos entornos diferentes en el proyecto, Production y UAT, desde Settings > Environment. 
+Para poder crear estos entornos es necesario cambiar el repositorio a público.
 
 ![image](https://github.com/user-attachments/assets/76b1d068-b7a3-4d78-94fc-0096852968d2)
 
 ![image](https://github.com/user-attachments/assets/fbb20e1d-f306-4155-85eb-665fa9126fee)
 
 ## 2. Configuración de Variables y Secretos
-En cada entorno (Production y UAT), se crearon los siguientes elementos para facilitar la conexión con DockerHub:
+En cada entorno (Production y UAT), se crean los siguientes elementos para facilitar la conexión con DockerHub:
 
   - DOCKER_PASSWORD: Un secreto que almacena la contraseña de DockerHub.
   - DOCKER_USERNAME: Una variable que contiene el nombre de usuario de DockerHub.
@@ -20,13 +20,12 @@ Estas variables y secretos serán utilizados más adelante para autenticar la co
 
 ## 4. Creación de un Action para generar el tag de la imagen
 
-Se creó un Action que extrae tanto el nombre de la aplicación como la versión desde el archivo package.json. 
+Se crea un Action que extrae tanto el nombre de la aplicación como la versión desde el archivo package.json. 
 Este action busca estos valores en el archivo para generar el nombre completo de la aplicación en el siguiente formato:
 
           <nombre-aplicación>:<versión>
 
-
-Este nombre generado será el que se utiliza más adelante para usar como tag para imagen que crearé y subiré a DockerHub. 
+Este nombre generado será el que se utiliza más adelante para usar como tag para imagen que se cree y se suba a DockerHub. 
 El action se encuentra en .github/actions/taggear_image.
 
 
@@ -67,7 +66,7 @@ El action se encuentra en .github/actions/taggear_image.
 
 ## 5. Creación de un Workflow principal para generar todo el flujo CI/CD
 
-Luego dentro de mi carpeta workflow se pueden encontrar tres archivos: 
+Luego dentro de mi carpeta workflow se encuentran tres archivos: 
 
   - workflow-main.yaml
   - ci-build-push-docker-image.yaml
@@ -76,25 +75,25 @@ Luego dentro de mi carpeta workflow se pueden encontrar tres archivos:
 
  ## Workflow-main 
 
-Este worflow se va aajecutar cuando se realice un push en las ramas main o development. Y contiene tres trabajos princiaples:
+Este worflow se va a ejecutar cuando se realice un push en las ramas main o development. Este contiene tres trabajos princiaples (jobs):
 
 - Entorno:
-    Su objetivo es definir el entorno. Para ello dependiendo de la rama en la que este main o development se le asigna un valor a la
-    valiable environment de Production o UAT (Son los entornos anteriormente configurados en el repositorio).
+    Su objetivo es definir el entorno. Para ello dependiendo de la rama en la que este, main o development, se le asigna un valor a la
+    variable environment de Production o UAT (Son los entornos anteriormente configurados en el repositorio).
       
         -  main => production
         - development => UAT
 
 - Call-workflow-ci:
-     Este trabajo usa un workflow reusabe almacenado en .github/workflows/ci-build-push-docker-image.yaml.
-    y que explicaré mas adelante. Tendrá un needs del trabajo entorno para asegurarse de que el entorno ya ha sido definido y además se le pasará
-    como entrada ese entorno. Por último se necesita establecer secrets_inhert para que herede los secretos definidios anteriormente.
+    Este trabajo usa un workflow reusabe almacenado en .github/workflows/ci-build-push-docker-image.yaml  que se explicará mas adelante.
+    Tiene un needs del trabajo entorno para asegurarse de que el entorno ya ha sido definido y además se le pasará como entrada (input) ese entorno. Por último, se necesita establecer 
+    secrets_inhert para que herede los secretos definidios anteriormente.
 
 
 -Call-workflow-cd:
-    Este trabajo usa un workflow reusabe almacenado en .github/workflows/cd-deploy-verify.yaml. 
-    Además este dependerá de los trabajos de entorno y de call-workflow-ci para asegurarse de que tanto el entorno como el proceso de CI han sido
-    ejecutados correctamente. En este caso se le pasarán dos entradas, el environment como ene l anterior trabajo y el tag que será el nombre de la imagen  
+    Este job usa un workflow reusabe almacenado en .github/workflows/cd-deploy-verify.yaml. 
+    Además este dependerá de los jobs de entorno y de call-workflow-ci para asegurarse de que tanto el entorno como el proceso de CI han sido
+    ejecutados correctamente. En este caso se le pasarán dos entradas, el environment como en el anterior job y el tag que es el nombre de la imagen  
     definida en el workflow de ci.
     También necesita secrets_inhert para que herede los secretos definidios anteriormente.
 
@@ -146,20 +145,19 @@ Este worflow se va aajecutar cuando se realice un push en las ramas main o devel
       
  ## 6. Workflow CI
 
-  Este workflow de integración continua realiza varias tareas para la construcción de la apllicación, creacción de una imagen Docker y subirla
+  Este workflow de integración continua realiza varias tareas para la construcción de la aplicación, creacción de la imagen Docker y la subida
   a DockerHub.
 
-  Al ser un workflow reusable se activara cuando otro lo llame (workflow_call) y ademas recipe un input environment indicando el entorno en el que se
-  encuentra y un output del tag de la imagen que se genera en su job build
+  Al ser un workflow reusable se activa cuando otro lo llama (workflow_call) y además recibe un input environment indicando el entorno en el que se
+  encuentra y un output del tag de la imagen que se genera en su job build.
 
   El primer job que se encuentra definidio es test-app que solo se ejecutará si el entorno es producción.Su objetivo es simular la ejecución de pruebas automatizadas en la aplicación, 
   asegurando que todo funcione correctamente antes de  construir de la imagen Docker.
 
-  El siguiente job es build que se encarga de la construcción de la apllicación, creacción de una imagen Docker y subirla
-  a DockerHub. Siempre se ejecuta aunque si se ejecuta test-app como en el caso de produccion espera a que haya finalizado.
+  El siguiente job es build que se encarga de la construcción de la aplicación, creacción de una imagen Docker y de su subida a DockerHub. 
+  Este job siempre se ejecuta, aunque si se ejecuta test-app como en el caso de produccóon espera a que haya finalizado.
   
-  Establece una variable global DOCKER_USERNAME que esta definida en mi variable de entronos anteriormente configurada y además establece una salida
-  que será el nombre del tag de la imagen de Docker generada.
+  Establece una variable global DOCKER_USERNAME que ha sido definida anteriormente en la variable de entrono y establece una salida que es el nombre del tag de la imagen de Docker generada.
 
    Sus pasos son los siguiente:
     - Hace un checkout del codigo para poder usar la action.
@@ -249,14 +247,15 @@ Este worflow se va aajecutar cuando se realice un push en las ramas main o devel
     
 ## 7. Workflow CD
 
-Este workflow se encarga del despliegue continuo, el cual descargará una imagen Docker de DockerHub y lo desplegará en un entorno de producción.
-Va a recibir dos entradas, el entorno para saber donde tiene que realizar el despligue y el tag para saber cual es l aimagen de Docker que necesita descargar.
+Este workflow se encarga del despliegue continuo, el cual descarga una imagen Docker de DockerHub y la despliega en un entorno.
+Va a recibir dos entradas, el entorno para saber donde tiene que realizar el despligue y el tag para saber cual es la imagen de Docker que necesita descargar.
+
 Se compone de un job deploy que establece los siguientes pasos:
  - Hace un pull a Docker de la imagen que desea desplegar
  - Inicia el contenerde en segundo plano y exponiendolo en el puerto 8080 como esta configurado en el proyecto de angular.
- - Verifica que el contenedor este corriendo.
+ - Verifica que el contenedor esta corriendo.
  - Verifica que la aplicación esta desplegada haciendo un sleep de 40 para que la aplicación se encuentre lista y usando un curl para hacer una petición a
-   localhost:8080- 
+   localhost:8080.
       
               name: CD
               on:
@@ -301,7 +300,7 @@ Se compone de un job deploy que establece los siguientes pasos:
 
  ## 8. Aprobadores de entorno:
 
-Configuro los reviewers para el ambiente de production, me añado como revisora.
+Configuro los reviewers para el ambiente de production añadiendome como revisora.
 
 ![image](https://github.com/user-attachments/assets/7bbb9487-2244-4730-a965-7beb4f9c4a50)
 
@@ -319,11 +318,11 @@ Se ejecutan los test antes de empezar con el workflow del CI
 
 ![image](https://github.com/user-attachments/assets/c6d7f0e8-59e9-48a0-937c-a6c716aab4d1)
 
-Una vez pasado los tests con éxito al estar en un entorno production el worflow se va a quedar esperando la aprobación:
+Una vez pasado los tests con éxito al estar en un entorno production el workflow se va a quedar esperando la aprobación.
 
 ![image](https://github.com/user-attachments/assets/fc83906c-0cd4-485f-936a-ba7d2e1f7d66)
 
-Se ejecuta la aprobación:
+Se ejecuta la aprobación.
 
 ![image](https://github.com/user-attachments/assets/66c99962-d1c8-4e20-a316-fb5a0f23f12c)
 
@@ -344,12 +343,12 @@ Nuevamente se queda esperando a que aprueben el despliegue.
 ![image](https://github.com/user-attachments/assets/b114f611-0391-4354-a085-50f2be610daf)
 
 
-Se aprueba y podemos observar como se han ejecutado correctamente los pasos para desplegar la iamgen en produccion.
+Se aprueba y podemos observar como se han ejecutado correctamente los pasos para desplegar la imagen en produccion.
 
 ![image](https://github.com/user-attachments/assets/c6e9af9b-2c01-45da-8d85-1782890e3307)
 
 
-El flujo ha sido correctamente ejecutado:
+El flujo ha sido correctamente ejecutado.
 
 ![image](https://github.com/user-attachments/assets/669ec6ab-a02b-4cf0-84cf-a8edd128cae0)
 
@@ -357,23 +356,23 @@ El flujo ha sido correctamente ejecutado:
 
   ## 9.2 Desplegar en UAT:
 
-Ahora desde el entorno de UAT cambio la versión manualmente de mi package.json a version: 1.0.1 y al hacer el push comenzará el flujo.
+Ahora desde el entorno de UAT cambio la versión manualmente de mi package.json a version: 1.0.1 y al hacer el push (en development) comenzará el flujo.
 
 ![image](https://github.com/user-attachments/assets/771113df-3385-4074-91b2-1210981829ef)
 
-Poder observar en que entorno estamos:
+Se oberseva en que entorno estamos.
 
 ![image](https://github.com/user-attachments/assets/05df02f9-0f74-4002-93b3-4fb64e773ea2)
 
-Al estar en UAt no se tienen que ejecutar los tests y además no necesita de aprobadores ya que no ha sido configurado para este entorno
+Al estar en UAt no se tienen que ejecutar los tests y además no necesita de aprobadores ya que no ha sido configurado para este entorno.
 
 ![image](https://github.com/user-attachments/assets/bebaf53f-048e-4775-baa6-35afb1dd4a03)
 
-Se van ejecutando los pasos del tag de la imagen construcción y subida con la nueva versión.
+Se van ejecutando los pasos del tag de la imagen, la construcción y la subida con la nueva versión.
 
 ![image](https://github.com/user-attachments/assets/e284be4a-0224-4aee-b565-5cb758500c96)
 
-Se comprueba en DockerHub que se ha subido correctamente.
+Se comprueba en DockerHub que  la imagen se ha subido correctamente.
 
 ![image](https://github.com/user-attachments/assets/9cebe795-f9a7-4ea4-ba16-e08872a86075)
 
@@ -382,7 +381,8 @@ Se puede observar que el despligue en UAT se ha ejecutado con éxito.
 ![image](https://github.com/user-attachments/assets/c45a6982-4903-4432-9bc1-645a2f9617f8)
 
 
-Este es el flujo que seguiria un desplieuge en UAT
+Este es el flujo que sigue el despliegue en UAT si todo ha sucedido correctamente.
+
 ![image](https://github.com/user-attachments/assets/a441b55d-c17a-486a-b4f8-07318d0d787b)
 
 
