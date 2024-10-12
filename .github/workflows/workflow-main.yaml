@@ -4,7 +4,7 @@ on:
     branches:
       - main
       - development
-      
+
 jobs:
   entorno:
     runs-on: ubuntu-latest

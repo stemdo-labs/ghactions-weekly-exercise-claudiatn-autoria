@@ -13,7 +13,8 @@ on:
   
 jobs:
   tests-app:
-    if:  ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Imprimir el valor del input environment
@@ -29,7 +30,7 @@ jobs:
         run: | 
           sleep 20
           echo "Ejecutando cobertura de código en producción"
-          
+
   build:
     if: ${{ always() }} 
     needs: [tests-app] 
