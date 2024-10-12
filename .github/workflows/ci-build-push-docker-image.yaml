@@ -31,8 +31,8 @@ jobs:
           echo "Ejecutando cobertura de código en producción"
           
   build:
-    if:  ${{ always() }}
-    needs: tests-app
+    if: ${{ inputs.environment != 'production' || needs.tests-app.result == 'success' }} 
+    needs: [tests-app] 
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
     env:
