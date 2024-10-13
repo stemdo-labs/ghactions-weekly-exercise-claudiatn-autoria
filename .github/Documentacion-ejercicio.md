@@ -413,23 +413,21 @@ Comprobamos que el entorno que nos esta cogiendo es el de production ya que lo h
 
 Se ejecutan los test antes de empezar con el workflow del CI
 
-![image](https://github.com/user-attachments/assets/c6d7f0e8-59e9-48a0-937c-a6c716aab4d1)
+![image](https://github.com/user-attachments/assets/dcb9edf2-b5c9-4aec-b2cc-a7675638b6a1)
 
 Una vez pasado los tests con éxito al estar en un entorno production el workflow se va a quedar esperando la aprobación.
 
-![image](https://github.com/user-attachments/assets/fc83906c-0cd4-485f-936a-ba7d2e1f7d66)
+![image](https://github.com/user-attachments/assets/14cf56e6-08c4-4d3a-850d-67000d0398d0)
 
 Se ejecuta la aprobación.
 
-![image](https://github.com/user-attachments/assets/66c99962-d1c8-4e20-a316-fb5a0f23f12c)
+![image](https://github.com/user-attachments/assets/3678f6f2-7c96-4d12-9d16-aed668f4accc)
+
 
 Y empieza con la ejecucción del workflow ci
 
-![image](https://github.com/user-attachments/assets/08dd7167-1279-4130-99c3-ff148ceba265)
+![image](https://github.com/user-attachments/assets/f76d48a7-6bf4-438c-a4c6-25d809a4138b)
 
-Se puede observar como se van ejecutando los pasos generando el tag de la imagen , haciendo login y subiendo la imagen.
-
-![image](https://github.com/user-attachments/assets/2c3cd863-6593-4479-8c4a-abe029e8f6b5)
 
 Desde DockerHub se puede verificar si la iamgen ha sido subida correctamente.
 
@@ -437,18 +435,19 @@ Desde DockerHub se puede verificar si la iamgen ha sido subida correctamente.
 
 Nuevamente se queda esperando a que aprueben el despliegue.
 
-![image](https://github.com/user-attachments/assets/b114f611-0391-4354-a085-50f2be610daf)
+![image](https://github.com/user-attachments/assets/b9d97a5b-877e-423e-b439-73353b84dbc3)
 
 
 Se aprueba y podemos observar como se han ejecutado correctamente los pasos para desplegar la imagen en produccion.
 
-![image](https://github.com/user-attachments/assets/c6e9af9b-2c01-45da-8d85-1782890e3307)
+![image](https://github.com/user-attachments/assets/18e41b77-ba40-4979-90a6-f427b49fbc4d)
+
+![image](https://github.com/user-attachments/assets/0a8d707e-0354-4cc8-86ce-4e6a8f9eaec2)
 
 
 El flujo ha sido correctamente ejecutado.
 
-![image](https://github.com/user-attachments/assets/669ec6ab-a02b-4cf0-84cf-a8edd128cae0)
-
+![image](https://github.com/user-attachments/assets/4a224d25-0fd4-495e-b2f3-871af73d2c00)
 
 
   ## 13.2 Desplegar en UAT:
