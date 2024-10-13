@@ -12,7 +12,7 @@ runs:
       id: version
       uses: ./.github/actions/version
 
-    - name: "Nombree app"
+    - name: "Nombre app"
       id: name
       uses: ./.github/actions/name-app
         
