@@ -250,12 +250,12 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
   
   El siguiente job, build, es responsable de la creación de una imagen Docker y su posterior subida a DockerHub. Este job se ejecuta únicamente después de que se haya generado el tag de la imagen. Además, utiliza la        variable DOCKER_USERNAME, que ha sido previamente definida en las variables de entorno, para facilitar su uso en todos los pasos del job. También establece una salida, que es el nombre del tag de la imagen Docker     º   generada.
 
-   Sus pasos son los siguiente:
-    - Hace un checkout del codigo para poder usar action.
-    - Hace login en DockerHub usando la action  docker/login-action@v3 y utilizando el nombre de usuario anteriormente establecido en la variable global y para 
+  Sus pasos son los siguiente: 
+  - Hace un checkout del codigo para poder usar action.
+  - Hace login en DockerHub usando la action  docker/login-action@v3 y utilizando el nombre de usuario anteriormente establecido en la variable global y para 
       la contraseña usa el secreto almacenado en secrets.DOCKER_PASSWORD.
-    - Construye la imagen de Docker con el tag generado.
-    - Sube la imagen a DockerHub.
+  - Construye la imagen de Docker con el tag generado.
+  - Sube la imagen a DockerHub.
             
             name: CI
             on:
