@@ -37,7 +37,7 @@ jobs:
         
        - name: Tag de la imagen de Docker
          id: tag
-         uses: ./.github/actions/taggear-image
+         uses: ./.github/actions/taggear_image
 
        - name: Imprimir tag
          run: |
