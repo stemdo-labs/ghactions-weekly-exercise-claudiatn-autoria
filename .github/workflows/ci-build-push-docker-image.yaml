@@ -18,12 +18,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-    
       - name: test app
         uses: ./.github/actions/tests-app
-        with:
-          environment: ${{inputs.environment}}
-
+  
   tag_image:
      if: ${{ always() }} 
      needs: tests-app
