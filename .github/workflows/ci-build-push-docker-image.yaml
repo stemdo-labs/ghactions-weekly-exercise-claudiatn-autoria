@@ -41,6 +41,7 @@ jobs:
            echo tag_image: ${{ steps.tag.outputs.tagged }}
   
   build:
+    if: ${{ always() }} 
     needs: tag_image
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
