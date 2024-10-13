@@ -9,10 +9,12 @@ runs:
   using: "composite"
   steps:
     - name: Imprimir rama del push
+      shell: bash
       run: echo "El push se realizó en la rama ${{ github.ref_name }}"
         
     - name: Definir entorno
       id: set-env
+      shell: bash
       run: |
         if [[ "${{ github.ref_name }}" == "main" ]]; then
           echo "environment=production" >> $GITHUB_OUTPUT
@@ -21,5 +23,6 @@ runs:
         fi
       
     - name: Imprimir entorno
+      shell: bash
       run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
   
