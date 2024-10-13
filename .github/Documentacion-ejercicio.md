@@ -17,53 +17,89 @@ Estas variables y secretos serán utilizados más adelante para autenticar la co
 
 ![image](https://github.com/user-attachments/assets/d3da434d-97b2-4372-9aa1-8e6ee8ddae19)
 
+## 4. Creación de un Action para extraer la versión
 
-## 4. Creación de un Action para generar el tag de la imagen
+Este action extrae la versión de la aplicación en el archivo package.json y la devuelve en una salida (output). La ruta del action es .github/actions/version
 
-Se crea un Action que extrae tanto el nombre de la aplicación como la versión desde el archivo package.json. 
-Este action busca estos valores en el archivo para generar el nombre completo de la aplicación en el siguiente formato:
+        name: "Extraer versión"
+        
+        outputs:
+          version:
+            description: "Versión de la app"
+            value: "${{steps.version.outputs.version}}"
+            
+        runs:
+          using: "composite"
+          steps:
+            - name: "Extraer versión"
+              id: version
+              shell: bash
+              run: |
+                version=$(jq -r '.version' ./package.json)
+                echo "Image version: $version"
+                echo  "version=${version}" >> $GITHUB_OUTPUT
+
+
+## 5. Creación de un Action para extraer el nombre de la aplicación
+
+Este action extrae el nombre de la aplicación en el archivo package.json y la devuelve en una salida (output). La ruta del action es .github/actions/name-app
+
+        name: Nombre de la app
+        
+        outputs:
+          name:
+            description: "Nombre de apliacion"
+            value: "${{steps.name.outputs.app_name}}"
+        
+        runs:
+          using: "composite"
+          steps:
+          - name: "Nombre de la aplición"
+            id: name
+            shell: bash
+            run: |
+                app_name=$(jq -r '.name' ./package.json)
+                echo "App name: $app_name"
+                echo "app_name=${app_name}" >> $GITHUB_OUTPUT
+
+## 6. Creación de un Action para generar el tag de la imagen
+
+Es el Action que hace uso de los actions anteriores ( versión y nombre de la aplicación ) para crear la etiqueta con el siguiente formato:
 
           <nombre-aplicación>:<versión>
 
-Este nombre generado será el que se utiliza más adelante para usar como tag para imagen que se cree y se suba a DockerHub. 
+Este nombre generado será el que se utilice más adelante para usar como tag de la imagen de Docker la cual se creará y se subirá a DockerHub. 
 El action se encuentra en .github/actions/taggear_image.
 
+        name: "Taggear Imagen de docker"
+        
+        outputs:
+          tagged:
+            description: "Nombre completo para la imagen taggeada"
+            value: "${{steps.taggear.outputs.tagged}}"
+            
+        runs:
+          using: "composite"
+          steps:
+            - name: "Version"
+              id: version
+              uses: ./.github/actions/version
+        
+            - name: "Nombre app"
+              id: name
+              uses: ./.github/actions/name-app
+                
+            - name: "Nombre completo Imagen"
+              id: taggear
+              shell: bash
+              run: |
+                tagged_image="${{  steps.name.outputs.name }}:${{ steps.version.outputs.version}}"
+                echo "Tagged image: $tagged_image"
+                echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
 
-          name: "Taggear Imagen de docker"
-          
-          outputs:
-            tagged:
-              description: "Nombre completo para la imagen taggeada"
-              value: "${{steps.taggear.outputs.tagged}}"
-          
-          runs:
-            using: "composite"
-            steps:
-              - name: "Extraer versión"
-                id: version
-                shell: bash
-                run: |
-                  version=$(jq -r '.version' ./package.json)
-                  echo "Image version: $version"
-                  echo  "version=${version}" >> $GITHUB_OUTPUT
-          
-              - name: "Extraer nombre de la app"
-                id: app_name
-                shell: bash
-                run: |
-                  app_name=$(jq -r '.name' ./package.json)
-                  echo "App name: $app_name"
-                  echo "App_name=${app_name}" >> $GITHUB_OUTPUT
-                  
-              - name: "Nombre completo Imagen"
-                id: taggear
-                shell: bash
-                run: |
-                  tagged_image="${{  steps.app_name.outputs.app_name }}:${{ steps.version.outputs.version}}"
-                  echo "Tagged image: $tagged_image"
-                  echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
 
-## 5. Creación de un action para la conficuración del entrono
+
+## 7. Creación de un action para la conficuración del entrono
 
 Su objetivo es definir el entorno. Para ello dependiendo de la rama en la que este, main o development, se le asigna un valor a la
 variable environment de Production o UAT (Son los entornos anteriormente configurados en el repositorio).
@@ -105,7 +141,30 @@ Se encuentra en .github/actions/environment.
             run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
 
 
-## 6. Creación de un Workflow principal para generar todo el flujo CI/CD
+## 8. Cracción de un Action para los tests de la aplicación:
+
+Este action ejecuta los test de la aplicación. Se encuentra en  .github/actions/tests-app
+
+      name: Tests app
+      
+      runs:
+          using: "composite"
+          steps:
+                
+            - name: Ejecutar simulación de test
+              shell: bash
+              run: | 
+                sleep 20
+                echo "Ejecutando simulación de test en producción"
+              
+            - name: Ejecutar cobertura de código
+              shell: bash
+              run: | 
+                sleep 20
+                echo "Ejecutando cobertura de código en producción"
+
+
+## 9. Creación de un Workflow principal para generar todo el flujo CI/CD
 
 Luego dentro de mi carpeta workflow se encuentran tres archivos: 
 
@@ -133,7 +192,7 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
     ejecutados correctamente. En este caso se le pasarán dos entradas, el environment como en el anterior job y el tag que es el nombre de la imagen  
     definida en el workflow de ci.
     También necesita secrets_inhert para que herede los secretos definidios anteriormente.
-
+    
         name: Workflow principal
         on:
           push:
@@ -175,34 +234,30 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
               environment: ${{ needs.entorno.outputs.environment }}
               tag: ${{ needs.call-workflow-ci.outputs.tag }}
             secrets: inherit 
-              
-
       
- ## 7. Workflow CI
+ ## 10. Workflow CI
 
-  Este workflow de integración continua realiza varias tareas para la construcción de la aplicación, creacción de la imagen Docker y la subida
-  a DockerHub.
-
-  Al ser un workflow reusable se activa cuando otro lo llama (workflow_call) y además recibe un input environment indicando el entorno en el que se
-  encuentra y un output del tag de la imagen que se genera en su job build.
-
-  El primer job que se encuentra definidio es test-app que solo se ejecutará si el entorno es producción.Su objetivo es simular la ejecución de pruebas automatizadas en la aplicación, 
-  asegurando que todo funcione correctamente antes de  construir de la imagen Docker.
-
-  El siguiente job es build que se encarga de la construcción de la aplicación, creacción de una imagen Docker y de su subida a DockerHub. 
-  Este job siempre se ejecuta, aunque si se ejecuta test-app como en el caso de produccóon espera a que haya finalizado.
+  Este workflow de integración continua.
   
-  Establece una variable global DOCKER_USERNAME que ha sido definida anteriormente en la variable de entrono y establece una salida que es el nombre del tag de la imagen de Docker generada.
+  Al ser un workflow reusable se activa cuando otro lo llama (workflow_call) y además recibe un input environment indicando el entorno en el que se
+  encuentra y un output del tag de la imagen que se genera en su job tag_image.
+  
+  Consta de tres jobs: (No se si es la mejor practica en este caso utilizar tres jobs ya que va a ser una misma máquina y los tres van a necesitar el checkout pero he decidido usar los tres para practicar los outputs       entre jobs)
+  
+  El primer job que se encuentra definidio es test-app que solo se ejecutará si el entorno es producción. Si está en el entorno de producción se usará el action de test anteriormente definido.
+  Su objetivo es simular la ejecución de pruebas automatizadas en la aplicación asegurando que todo funcione correctamente antes de construir de la imagen Docker.
+
+  El segundo job es tag_image que es el encargado de usar el action para definir el tag de la imagen. Este job siempre se ejecuta aunque si se ejecuta test-app como en el caso de produccóon espera a que haya finalizado
+  
+  El siguiente job, build, es responsable de la creación de una imagen Docker y su posterior subida a DockerHub. Este job se ejecuta únicamente después de que se haya generado el tag de la imagen. Además, utiliza la        variable DOCKER_USERNAME, que ha sido previamente definida en las variables de entorno, para facilitar su uso en todos los pasos del job. También establece una salida, que es el nombre del tag de la imagen Docker     º   generada.
 
    Sus pasos son los siguiente:
-    - Hace un checkout del codigo para poder usar la action.
-    - LLama a la acción personalizada para crear el tag que usará la imagen de Docker.
-    - Hace login en DockerHub usando la acción  docker/login-action@v3 y utilizando el nombre de usuario anteriormente establecido en la variable global y para 
+    - Hace un checkout del codigo para poder usar action.
+    - Hace login en DockerHub usando la action  docker/login-action@v3 y utilizando el nombre de usuario anteriormente establecido en la variable global y para 
       la contraseña usa el secreto almacenado en secrets.DOCKER_PASSWORD.
     - Construye la imagen de Docker con el tag generado.
     - Sube la imagen a DockerHub.
-
-
+            
             name: CI
             on:
               workflow_call:
@@ -213,7 +268,7 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
             
                 outputs:
                   tag:
-                    value: ${{ jobs.build.outputs.image_name }}
+                    value: ${{ jobs.tag_image.outputs.tag_image }}
             
               
             jobs:
@@ -221,40 +276,42 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
                 if: ${{ inputs.environment == 'production' }}
                 runs-on: ubuntu-latest
                 steps:
-                  - name: Ejecutar simulación de test
-                    run: | 
-                      sleep 20
-                      echo "Ejecutando simulación de test en producción"
+                  - name: Checkout
+                    uses: actions/checkout@v3
+                  - name: test app
+                    uses: ./.github/actions/tests-app
+              
+              tag_image:
+                 if: ${{ always() }} 
+                 needs: tests-app
+                 runs-on: ubuntu-latest
+                 outputs:
+                  tag_image: ${{ steps.tag.outputs.tagged }}
+            
+                 steps:
+                   - name: Checkout
+                     uses: actions/checkout@v3
                     
-                  - name: Ejecutar cobertura de código
-                    run: | 
-                      sleep 20
-                      echo "Ejecutando cobertura de código en producción"
-                      
+                   - name: Tag de la imagen de Docker
+                     id: tag
+                     uses: ./.github/actions/taggear_image
+            
+                   - name: Imprimir tag
+                     run: |
+                       echo tag_image: ${{ steps.tag.outputs.tagged }}
+              
               build:
-                if: ${{ always() }} 
-                needs: [tests-app] 
+                needs: tag_image
                 runs-on: ubuntu-latest
                 environment: ${{inputs.environment}}
+                
                 env:
                   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-                  
-                outputs:
-                  image_name: ${{ steps.taggear_image.outputs.tagged }}
                   
                   
                 steps:
                 - name: Checkout
                   uses: actions/checkout@v3
-                
-                - name: Action tag
-                  id: taggear_image
-                  uses: ./.github/actions/taggear_image
-              
-                - name: Nombre del tag
-                  run: |
-                    echo image_name="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
-            
                    
                 - name: Imprimir valores de entrada
                   run: |
@@ -270,17 +327,18 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
             
                 - name: Build Docker image
                   run: |
-                    docker build -t $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }} .
+                    docker build -t $DOCKER_USERNAME/${{ needs.tag_image.outputs.tag_image }} .
                     docker images
                     
             
                 - name: Subir Docker image
                   run: |
-                    docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
-
- 
+                    docker push $DOCKER_USERNAME/${{ needs.tag_image.outputs.tag_image }}
+            
+             
+  
     
-## 8. Workflow CD
+## 11. Workflow CD
 
 Este workflow se encarga del despliegue continuo, el cual descarga una imagen Docker de DockerHub y la despliega en un entorno.
 Va a recibir dos entradas, el entorno para saber donde tiene que realizar el despligue y el tag para saber cual es la imagen de Docker que necesita descargar.
@@ -292,57 +350,61 @@ Se compone de un job deploy que establece los siguientes pasos:
  - Verifica que la aplicación esta desplegada haciendo un sleep de 40 para que la aplicación se encuentre lista y usando un curl para hacer una petición a
    localhost:8080.
       
-              name: CD
-              on:
-                workflow_call:
-                   inputs:
-                    environment:
-                      type: string
-                      required: true
-                    tag:
-                      type: string
-                      required: true
-                      
-              jobs:
-                deploy:
-                   runs-on: ubuntu-latest
-                   environment: ${{ inputs.environment }} 
-                   
-                   env:
-                    DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-              
-                   steps:
-                    - name: Imprimir valores de entrada
-                      run: |
-                          echo "El entorno recibido es: ${{ inputs.environment }}"
-                          echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
-                        
-                    - name: Hacer pull de la imagen de Docker
-                      run: |
-                        docker pull $DOCKER_USERNAME/${{ inputs.tag }}
-                        
-                    - name: Desplegar
-                      run: |
-                        docker run -d -p 8080:8080  $DOCKER_USERNAME/${{ inputs.tag }}
-              
-                    - name: Verificar si el contenedor está corriendo
-                      run: docker ps
-              
-                    - name: Verificar respuesta de la app
-                      run: |
-                         sleep 40
-                         curl http://localhost:8080
+        name: CD
+        on:
+          workflow_call:
+             inputs:
+              environment:
+                type: string
+                required: true
+              tag:
+                type: string
+                required: true
+                
+        jobs:
+          deploy:
+             runs-on: ubuntu-latest
+             environment: ${{ inputs.environment }} 
+             
+             env:
+              DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+        
+             steps:
+              - name: Imprimir valores de entrada
+                run: |
+                    echo "El entorno recibido es: ${{ inputs.environment }}"
+                    echo "El nombre de usuario de Docker es: $DOCKER_USERNAME"
+                    echo "El tag de la imagen es: ${{ inputs.tag }}"
+        
+                  
+              - name: Hacer pull de la imagen de Docker
+                run: |
+                  docker pull $DOCKER_USERNAME/${{ inputs.tag }}
+                  
+              - name: Desplegar
+                run: |
+                  docker run -d -p 8080:8080  $DOCKER_USERNAME/${{ inputs.tag }}
+        
+              - name: Verificar si el contenedor está corriendo
+                run: docker ps
+        
+              - name: Verificar respuesta de la app
+                run: |
+                   sleep 40
+                   curl http://localhost:8080
 
- ## 9. Aprobadores de entorno:
+
+        
+ ## 12. Aprobadores de entorno:
 
 Configuro los reviewers para el ambiente de production añadiendome como revisora.
 
 ![image](https://github.com/user-attachments/assets/7bbb9487-2244-4730-a965-7beb4f9c4a50)
 
         
-  ## 10.Pruebas:
+  ## 13.Pruebas:
 
-  ## 10.1 Desplegar en Production:
+  ## 13.1 Desplegar en Production:
 Cambio la versión manualmente de mi package.json a version: 1.0.0 y al hacer commit automaticamente generará el push.
 
 Comprobamos que el entorno que nos esta cogiendo es el de production ya que lo hemos ejecutado desde la rama main:
@@ -389,7 +451,7 @@ El flujo ha sido correctamente ejecutado.
 
 
 
-  ## 10.2 Desplegar en UAT:
+  ## 13.2 Desplegar en UAT:
 
 Ahora desde el entorno de UAT cambio la versión manualmente de mi package.json a version: 1.0.1 y al hacer el push (en development) comenzará el flujo.
 
