@@ -7,7 +7,7 @@ outputs:
     
 runs:
   using: "composite"
-   steps:
+  steps:
     - name: Imprimir rama del push
       run: echo "El push se realizó en la rama ${{ github.ref_name }}"
         
