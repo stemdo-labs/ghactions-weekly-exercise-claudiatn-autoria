@@ -1,0 +1,17 @@
+name: "Extraer versión"
+
+outputs:
+  version:
+    description: "Versión de la app"
+    value: "${{steps.version.outputs.version}}"
+    
+runs:
+  using: "composite"
+  steps:
+    - name: "Extraer versión"
+      id: version
+      shell: bash
+      run: |
+        version=$(jq -r '.version' ./package.json)
+        echo "Image version: $version"
+        echo  "version=${version}" >> $GITHUB_OUTPUT
