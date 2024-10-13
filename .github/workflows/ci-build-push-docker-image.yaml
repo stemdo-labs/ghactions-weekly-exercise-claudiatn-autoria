@@ -25,6 +25,7 @@ jobs:
           environment: ${{inputs.environment}}
 
   tag_image:
+     if: ${{ always() }} 
      needs: tests-app
      runs-on: ubuntu-latest
      outputs:
@@ -43,8 +44,7 @@ jobs:
            echo tag_image: ${{ steps.tag.outputs.tagged }}
   
   build:
-    if: ${{ always() }} 
-    needs: [tests-app] 
+    needs: tag_image
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
     
