@@ -22,7 +22,7 @@ jobs:
       - name: test app
         uses: ./.github/actions/tests-app
         with:
-          environment: "${{inputs.environment}}"
+          environment: ${{inputs.environment}}
 
   build:
     if: ${{ always() }} 
