@@ -22,7 +22,7 @@ runs:
       run: |
         app_name=$(jq -r '.name' ./package.json)
         echo "App name: $app_name"
-        echo "App_name=${app_name}" >> $GITHUB_OUTPUT
+        echo "app_name=${app_name}" >> $GITHUB_OUTPUT
         
     - name: "Nombre completo Imagen"
       id: taggear
@@ -30,5 +30,5 @@ runs:
       run: |
         tagged_image="${{  steps.app_name.outputs.app_name }}:${{ steps.version.outputs.version}}"
         echo "Tagged image: $tagged_image"
-        echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
+        echo "tagged=${tagged_image}"
   
