@@ -62,9 +62,50 @@ El action se encuentra en .github/actions/taggear_image.
                   tagged_image="${{  steps.app_name.outputs.app_name }}:${{ steps.version.outputs.version}}"
                   echo "Tagged image: $tagged_image"
                   echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
-            
 
-## 5. Creación de un Workflow principal para generar todo el flujo CI/CD
+## 5. Creación de un action para la conficuración del entrono
+
+Su objetivo es definir el entorno. Para ello dependiendo de la rama en la que este, main o development, se le asigna un valor a la
+variable environment de Production o UAT (Son los entornos anteriormente configurados en el repositorio).
+Este valor se define como una salida (output) que se usará en mi workflow principal.
+
+      
+        -  main => production
+        - development => UAT
+
+
+Se encuentra en .github/actions/environment.
+
+      name: "Enviroment"
+      
+      outputs:
+        environment:
+          description: "Entorno donde me encuentro"
+          value: "${{steps.set-env.outputs.environment}}"
+          
+      runs:
+        using: "composite"
+        steps:
+          - name: Imprimir rama del push
+            shell: bash
+            run: echo "El push se realizó en la rama ${{ github.ref_name }}"
+              
+          - name: Definir entorno
+            id: set-env
+            shell: bash
+            run: |
+              if [[ "${{ github.ref_name }}" == "main" ]]; then
+                echo "environment=production" >> $GITHUB_OUTPUT
+              else
+                echo "environment=uat" >> $GITHUB_OUTPUT
+              fi
+            
+          - name: Imprimir entorno
+            shell: bash
+            run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
+
+
+## 6. Creación de un Workflow principal para generar todo el flujo CI/CD
 
 Luego dentro de mi carpeta workflow se encuentran tres archivos: 
 
@@ -78,11 +119,7 @@ Luego dentro de mi carpeta workflow se encuentran tres archivos:
 Este worflow se va a ejecutar cuando se realice un push en las ramas main o development. Este contiene tres trabajos princiaples (jobs):
 
 - Entorno:
-    Su objetivo es definir el entorno. Para ello dependiendo de la rama en la que este, main o development, se le asigna un valor a la
-    variable environment de Production o UAT (Son los entornos anteriormente configurados en el repositorio).
-      
-        -  main => production
-        - development => UAT
+    Este job llama usa el action personalizada de environment para definir el entorno y que su valor sea accesible para otros jobs.
 
 - Call-workflow-ci:
     Este trabajo usa un workflow reusabe almacenado en .github/workflows/ci-build-push-docker-image.yaml  que se explicará mas adelante.
@@ -97,35 +134,32 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
     definida en el workflow de ci.
     También necesita secrets_inhert para que herede los secretos definidios anteriormente.
 
-
         name: Workflow principal
         on:
           push:
             branches:
               - main
               - development
+          workflow_dispatch:
+            
         
         jobs:
           entorno:
             runs-on: ubuntu-latest
-            outputs:
-              environment: ${{ steps.set-env.outputs.environment }} 
-            steps:
-              - name: Imprimir rama del push
-                run: echo "El push se realizó en la rama ${{ github.ref_name }}"
-                
-              - name: Definir entorno
-                id: set-env
-                run: |
-                  if [[ "${{ github.ref_name }}" == "main" ]]; then
-                    echo "environment=production" >> $GITHUB_OUTPUT
-                  else
-                    echo "environment=uat" >> $GITHUB_OUTPUT
-                  fi
+            outputs: 
+              environment: ${{ steps.environment.outputs.environment }}
               
-              - name: Imprimir entorno
-                run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
-        
+            steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Action environment
+              id: environment
+              uses: ./.github/actions/environment
+          
+            - name: Entorno
+              run: |
+                echo environment="${{ steps.environment.outputs.environment }}"
               
           call-workflow-ci:
             needs: [entorno]
@@ -136,14 +170,15 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
            
           call-workflow-cd:
             needs: [entorno,call-workflow-ci]
-            uses: ./.github/workflows/cd-deply-verify.yaml
+            uses: ./.github/workflows/cd-deploy-verify.yaml
             with:
               environment: ${{ needs.entorno.outputs.environment }}
               tag: ${{ needs.call-workflow-ci.outputs.tag }}
             secrets: inherit 
+              
 
       
- ## 6. Workflow CI
+ ## 7. Workflow CI
 
   Este workflow de integración continua realiza varias tareas para la construcción de la aplicación, creacción de la imagen Docker y la subida
   a DockerHub.
@@ -245,7 +280,7 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
 
  
     
-## 7. Workflow CD
+## 8. Workflow CD
 
 Este workflow se encarga del despliegue continuo, el cual descarga una imagen Docker de DockerHub y la despliega en un entorno.
 Va a recibir dos entradas, el entorno para saber donde tiene que realizar el despligue y el tag para saber cual es la imagen de Docker que necesita descargar.
@@ -298,16 +333,16 @@ Se compone de un job deploy que establece los siguientes pasos:
                          sleep 40
                          curl http://localhost:8080
 
- ## 8. Aprobadores de entorno:
+ ## 9. Aprobadores de entorno:
 
 Configuro los reviewers para el ambiente de production añadiendome como revisora.
 
 ![image](https://github.com/user-attachments/assets/7bbb9487-2244-4730-a965-7beb4f9c4a50)
 
         
-  ## 9.Pruebas:
+  ## 10.Pruebas:
 
-  ## 9.1 Desplegar en Production:
+  ## 10.1 Desplegar en Production:
 Cambio la versión manualmente de mi package.json a version: 1.0.0 y al hacer commit automaticamente generará el push.
 
 Comprobamos que el entorno que nos esta cogiendo es el de production ya que lo hemos ejecutado desde la rama main:
@@ -354,7 +389,7 @@ El flujo ha sido correctamente ejecutado.
 
 
 
-  ## 9.2 Desplegar en UAT:
+  ## 10.2 Desplegar en UAT:
 
 Ahora desde el entorno de UAT cambio la versión manualmente de mi package.json a version: 1.0.1 y al hacer el push (en development) comenzará el flujo.
 
