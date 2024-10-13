@@ -30,5 +30,5 @@ runs:
       run: |
         tagged_image="${{  steps.app_name.outputs.app_name }}:${{ steps.version.outputs.version}}"
         echo "Tagged image: $tagged_image"
-        echo "tagged=${tagged_image}"
+        echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
   
