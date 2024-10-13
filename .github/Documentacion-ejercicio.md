@@ -185,8 +185,7 @@ Este worflow se va a ejecutar cuando se realice un push en las ramas main o deve
     Tiene un needs del trabajo entorno para asegurarse de que el entorno ya ha sido definido y además se le pasará como entrada (input) ese entorno. Por último, se necesita establecer 
     secrets_inhert para que herede los secretos definidios anteriormente.
 
-
--Call-workflow-cd:
+- Call-workflow-cd:
     Este job usa un workflow reusabe almacenado en .github/workflows/cd-deploy-verify.yaml. 
     Además este dependerá de los jobs de entorno y de call-workflow-ci para asegurarse de que tanto el entorno como el proceso de CI han sido
     ejecutados correctamente. En este caso se le pasarán dos entradas, el environment como en el anterior job y el tag que es el nombre de la imagen  
