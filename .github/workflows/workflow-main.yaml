@@ -8,24 +8,17 @@ on:
 jobs:
   entorno:
     runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.set-env.outputs.environment }} 
     steps:
-      - name: Imprimir rama del push
-        run: echo "El push se realizó en la rama ${{ github.ref_name }}"
-        
-      - name: Definir entorno
-        id: set-env
-        run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-          else
-            echo "environment=uat" >> $GITHUB_OUTPUT
-          fi
-      
-      - name: Imprimir entorno
-        run: echo "El entorno es  ${{ steps.set-env.outputs.environment }}"
-
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Action environment
+      id: environment
+      uses: ./.github/actions/environment
+  
+    - name: Entorno
+      run: |
+        echo environment="${{ steps.environment.outputs.environment }}" >> $GITHUB_OUTPUT
       
   call-workflow-ci:
     needs: [entorno]
