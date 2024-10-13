@@ -8,7 +8,7 @@ on:
 
     outputs:
       tag:
-        value: ${{ jobs.build.outputs.image_name }}
+        value: ${{ jobs.tag_image.outputs.tag_image }}
 
   
 jobs:
@@ -24,6 +24,24 @@ jobs:
         with:
           environment: ${{inputs.environment}}
 
+  tag_image:
+     needs: tests-app
+     runs-on: ubuntu-latest
+     outputs:
+      tag_image: ${{ steps.tag.outputs.tagged }}
+
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
+        
+       - name: Tag de la imagen de Docker
+         id: tag
+         uses: ./.github/actions/taggear-image
+
+       - name: Imprimir tag
+         run: |
+           echo tag_image: ${{ steps.tag.outputs.tagged }}
+  
   build:
     if: ${{ always() }} 
     needs: [tests-app] 
@@ -33,22 +51,10 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       
-    outputs:
-      image_name: ${{ steps.taggear_image.outputs.tagged }}
-      
       
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    
-    - name: Action tag
-      id: taggear_image
-      uses: ./.github/actions/taggear_image
-  
-    - name: Nombre del tag
-      run: |
-        echo image_name="${{ steps.taggear_image.outputs.tagged }}" >> $GITHUB_OUTPUT
-
        
     - name: Imprimir valores de entrada
       run: |
@@ -64,13 +70,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }} .
+        docker build -t $DOCKER_USERNAME/${{ needs.tag_image.outputs.tag_image }} .
         docker images
         
 
     - name: Subir Docker image
       run: |
-        docker push $DOCKER_USERNAME/${{ steps.taggear_image.outputs.tagged }}
+        docker push $DOCKER_USERNAME/${{ needs.tag_image.outputs.tag_image }}
 
  
     
