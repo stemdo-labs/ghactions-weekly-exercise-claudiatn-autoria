@@ -1,0 +1,26 @@
+name: Tests app
+
+inputs:
+  environment:
+    type: string
+    required: true
+
+runs:
+    using: "composite"
+    steps:
+      - name: Imprimir el valor del input environment
+        shell: bash
+        run: |
+          echo "El entorno recibido es: ${{ inputs.environment }}"
+          
+      - name: Ejecutar simulación de test
+        shell: bash
+        run: | 
+          sleep 20
+          echo "Ejecutando simulación de test en producción"
+        
+      - name: Ejecutar cobertura de código
+        shell: bash
+        run: | 
+          sleep 20
+          echo "Ejecutando cobertura de código en producción"
