@@ -1,0 +1,17 @@
+name: Nombre de la app
+
+outputs:
+  name:
+    description: "Nombre de apliacion"
+    value: "${{steps.name.outputs.app_name}}"
+
+runs:
+  using: "composite"
+  steps:
+  - name: "Nombre de la aplición"
+    id: name
+    shell: bash
+    run: |
+        app_name=$(jq -r '.name' ./package.json)
+        echo "App name: $app_name"
+        echo "app_name=${app_name}" >> $GITHUB_OUTPUT

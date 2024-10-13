@@ -14,22 +14,15 @@ on:
 jobs:
   tests-app:
     if: ${{ inputs.environment == 'production' }}
-
     runs-on: ubuntu-latest
     steps:
-      - name: Imprimir el valor del input environment
-        run: |
-          echo "El entorno recibido es: ${{ inputs.environment }}"
-          
-      - name: Ejecutar simulación de test
-        run: | 
-          sleep 20
-          echo "Ejecutando simulación de test en producción"
-        
-      - name: Ejecutar cobertura de código
-        run: | 
-          sleep 20
-          echo "Ejecutando cobertura de código en producción"
+      - name: Checkout
+        uses: actions/checkout@v3
+    
+      - name: test app
+        uses: ./.github/actions/tests-app
+        with:
+          environment: ${{inputs.environment}}
 
   build:
     if: ${{ always() }} 
