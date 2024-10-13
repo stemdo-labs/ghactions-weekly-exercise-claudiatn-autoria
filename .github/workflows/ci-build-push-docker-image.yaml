@@ -36,6 +36,7 @@ jobs:
     needs: [tests-app] 
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
+    
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       
