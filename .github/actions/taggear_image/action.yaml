@@ -1,5 +1,9 @@
 name: "Taggear Imagen de docker"
-
+inputs:
+  environment:
+    type: string
+    required: true
+    
 outputs:
   tagged:
     description: "Nombre completo para la imagen taggeada"
