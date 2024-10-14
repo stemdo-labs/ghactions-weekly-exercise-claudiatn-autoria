@@ -24,7 +24,11 @@ runs:
       id: taggear
       shell: bash
       run: |
-        tagged_image="${{  steps.name.outputs.name }}:${{ steps.version.outputs.version}}"
+         if [[ "${{ inputs.environment }}" == "development" ]]; then
+           tagged_image="${{  steps.name.outputs.name }}:${{ steps.version.outputs.version}}-snapshot"
+         else
+           tagged_image="${{  steps.name.outputs.name }}:${{ steps.version.outputs.version}}"
+         fi
         echo "Tagged image: $tagged_image"
         echo "tagged=${tagged_image}" >> $GITHUB_OUTPUT
   
