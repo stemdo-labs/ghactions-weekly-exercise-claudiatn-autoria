@@ -42,7 +42,6 @@ Desde mi workflow ci se le pasara este entorno cuando se llama a la action:
 
             name: CI
             on:
-              workflow_dispatch:
               workflow_call:
                 inputs:
                   environment:
